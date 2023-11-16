@@ -12,18 +12,18 @@ on:
         # Description to be shown in the UI, instead of 'scraping-url'
         description: 'Scraping URL'
         # Default value if no value is explicitly provided
-        default: 'https://example.com/'
+        default: 'gist.github.com/Iron-Wolf.html'
         # Input has to be provided for the workflow to run
         required: true
         # The data type of the input
         type: string
 
 jobs:
-  format:
+  scrape:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: context
+      - name: context values
         run: |
           echo "URL : ${{ inputs.scraping-url }}";
       - name: Download website
@@ -37,11 +37,11 @@ jobs:
             --html-extension \
             --convert-links \
             --domains quotes.toscrape.com \
-            ${{ inputs.scraping-url }}
+            https://${{ inputs.scraping-url }}
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
           commit-message: Scrapped result
           title: ${{ inputs.scraping-url }}
-          body: This is an auto-generated PR
+          body: Visualize here > https://raw.githack.com/Iron-Wolf/proxy-pass/scrape/${{ inputs.scraping-url }}
           branch: scrape
