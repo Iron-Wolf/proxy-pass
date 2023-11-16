@@ -1,4 +1,4 @@
-# proxy-bypass
+# proxy-pass
 testing stuff...
 
 sample :  
