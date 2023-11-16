@@ -8,11 +8,11 @@ on:
   workflow_dispatch:
     # Inputs the workflow accepts.
     inputs:
-      name:
-        # Friendly description to be shown in the UI instead of 'name'
-        description: 'Person to greet'
+      scraping-url:
+        # Description to be shown in the UI, instead of 'scraping-url'
+        description: 'Scraping URL'
         # Default value if no value is explicitly provided
-        default: 'World'
+        default: 'https://example.com/'
         # Input has to be provided for the workflow to run
         required: true
         # The data type of the input
@@ -23,9 +23,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: context
+        run: echo "URL : ${{ inputs.scraping-url }}";
       - name: Download website
         run: |
-          echo "Hello ${{ inputs.name }}";
           wget \
             --recursive \
             --level=2 \
@@ -35,11 +36,11 @@ jobs:
             --html-extension \
             --convert-links \
             --domains quotes.toscrape.com \
-            https://gist.github.com/Iron-Wolf
+            ${{ inputs.scraping-url }}
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
-          commit-message: update local website copy
-          title: Automated Updates to Local Website Copy
-          body: This is an auto-generated PR with website updates.
-          branch: website-updates
+          commit-message: Result of : ${{ inputs.scraping-url }}
+          title: ${{ inputs.scraping-url }}
+          body: This is an auto-generated PR
+          branch: scrape-${{ inputs.scraping-url }}
