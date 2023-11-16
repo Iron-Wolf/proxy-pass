@@ -44,4 +44,4 @@ jobs:
           commit-message: Scrapped result
           title: ${{ inputs.scraping-url }}
           body: This is an auto-generated PR
-          branch: scrape-${{ inputs.scraping-url }}
+          branch: scrape
