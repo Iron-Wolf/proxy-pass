@@ -24,7 +24,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: context
-        run: echo "URL : ${{ inputs.scraping-url }}";
+        run: |
+          echo "URL : ${{ inputs.scraping-url }}";
       - name: Download website
         run: |
           wget \
@@ -40,7 +41,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
-          commit-message: Result of : ${{ inputs.scraping-url }}
+          commit-message: Scrapped result
           title: ${{ inputs.scraping-url }}
           body: This is an auto-generated PR
           branch: scrape-${{ inputs.scraping-url }}
