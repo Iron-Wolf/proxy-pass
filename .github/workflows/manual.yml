@@ -23,14 +23,16 @@ jobs:
     runs-on: ubuntu-latest
     env:
       regex_base_url: '.*\.(\w){2,3}(?=/)'
+      base_url: ''
     steps:
       - uses: actions/checkout@v4
       - name: context values
         run: |
           echo "URL : ${{inputs.scraping_url}}"
           # use grep, because bash regex does not support lookahead (?)
-          short_url=$(echo ${{inputs.scraping_url}} | grep -oP $regex_base_url)
-          echo $short_url
+          echo $base_url
+          base_url=$(echo ${{inputs.scraping_url}} | grep -oP $regex_base_url)
+          echo $base_url
       - name: Download website
         run: |
           wget \
@@ -47,7 +49,7 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           commit-message: Scrapped result
-          title: ${{ inputs.scraping_url }}
+          title: $base_url
           # action generate ".html" files
           body: Visualize here > https://raw.githack.com/Iron-Wolf/proxy-pass/scrape/${{ inputs.scraping_url }}.html
           branch: scrape
