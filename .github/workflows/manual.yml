@@ -18,12 +18,15 @@ on:
         # The data type of the input
         type: string
 
+# doc : https://docs.github.com/en/actions/learn-github-actions/variables
+env:
+  base_url: ''
+
 jobs:
   scrape:
     runs-on: ubuntu-latest
     env:
       regex_base_url: '.*\.(\w){2,3}(?=/)'
-      base_url: ''
     steps:
       - uses: actions/checkout@v4
       - name: context values
