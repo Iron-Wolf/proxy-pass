@@ -28,6 +28,7 @@ jobs:
           echo "URL : $inputs.scraping-url"
           # use grep regex, because bash regex does not support lookahead (?)
           resu=$(echo $inputs.scraping-url | grep -oP ".*(?=/)")
+          echo $resu
       - name: Download website
         run: |
           wget \
