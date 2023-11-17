@@ -25,10 +25,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: context values
         run: |
-          echo "URL : $inputs.scraping-url"
+          echo "URL : ${{inputs.scraping-url}}"
           # use grep regex, because bash regex does not support lookahead (?)
-          resu=$(echo $inputs.scraping-url | grep -oP ".*(?=/)")
-          echo $resu
+          striped-url=$(echo ${{inputs.scraping-url}} | grep -oP ".*(?=/)")
+          echo $striped-url
       - name: Download website
         run: |
           wget \
