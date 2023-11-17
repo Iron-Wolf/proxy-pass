@@ -34,7 +34,7 @@ jobs:
           echo "URL : ${{inputs.scraping_url}}"
           # use grep, because bash regex does not support lookahead (?)
           base_url=$(echo ${{inputs.scraping_url}} | grep -oP $regex_base_url)
-          echo $base_url
+          echo "base_url=$base_url" >> $GITHUB_ENV
       - name: Download website
         run: |
           wget \
