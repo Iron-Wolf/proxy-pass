@@ -51,7 +51,7 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           commit-message: Scrapped result
-          title: "URL : $base_url"
+          title: "URL : ${{env.base_url}}"
           # action generate ".html" files
           body: Visualize here > https://raw.githack.com/Iron-Wolf/proxy-pass/scrape/${{inputs.scraping_url}}.html
           branch: scrape
