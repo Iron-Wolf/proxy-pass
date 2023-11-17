@@ -30,7 +30,6 @@ jobs:
         run: |
           echo "URL : ${{inputs.scraping_url}}"
           # use grep, because bash regex does not support lookahead (?)
-          echo $base_url
           base_url=$(echo ${{inputs.scraping_url}} | grep -oP $regex_base_url)
           echo $base_url
       - name: Download website
@@ -49,7 +48,7 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           commit-message: Scrapped result
-          title: $base_url
+          title: ${{base_url}}
           # action generate ".html" files
           body: Visualize here > https://raw.githack.com/Iron-Wolf/proxy-pass/scrape/${{ inputs.scraping_url }}.html
           branch: scrape
