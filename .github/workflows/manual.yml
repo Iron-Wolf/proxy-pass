@@ -60,5 +60,5 @@ jobs:
           commit-message: Scrapped result
           title: "URL : ${{env.base_url}}"
           # action generate ".html" files
-          body: Visualize here > https://raw.githack.com/Iron-Wolf/proxy-pass/scrape/${{env.full_url_no_http}}.html
+          body: Visualize here > https://raw.githack.com/Iron-Wolf/proxy-pass/${{inputs.branch_name}}/${{env.full_url_no_http}}.html
           branch: ${{inputs.branch_name}}
