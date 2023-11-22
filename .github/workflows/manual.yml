@@ -30,8 +30,8 @@ jobs:
   scrape:
     runs-on: ubuntu-latest
     env:
-      regex_base_url: '(?<=https?://).*\.(\w){2,3}(?=/)'
-      regex_no_http: '(?<=https?://).*'
+      regex_base_url: '(?<=https://).*\.(\w){2,3}(?=/)'
+      regex_no_http: '(?<=https://).*'
     steps:
       - uses: actions/checkout@v4
       - name: context values
