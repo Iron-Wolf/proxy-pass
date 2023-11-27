@@ -12,7 +12,7 @@ on:
         # Description to be shown in the UI, instead of 'scraping-url'
         description: 'Scraping URL'
         # Default value if no value is explicitly provided
-        default: 'gist.github.com/Iron-Wolf'
+        default: 'https://gist.github.com/Iron-Wolf'
         # Input has to be provided for the workflow to run
         required: true
         # The data type of the input
