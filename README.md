@@ -1,7 +1,7 @@
 # proxy-pass
 This project is used mainly for testing stuff...
 
-## Details
+## Sources used to build this repo
 Blog post : 
 https://peterevans.dev/posts/github-actions-how-to-create-pull-requests-automatically/
 
