@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>
+        A step beyond Rust&#39;s pattern matching ::
+        Radiki Dev — A blog by Chris Gioran
+      </title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="Going from &amp;ldquo;I have no clue what I&amp;rsquo;m doing&amp;rdquo; to &amp;ldquo;Hey, it worked!&amp;rdquo;, one weird idea at a time"
+/>
+<meta
+  name="keywords"
+  content=""
+/>
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="http://radiki.dev/posts/match-and-bind-patterns/" />
+
+
+
+
+
+
+
+<link rel="stylesheet" href="https://radiki.dev/css/style.css" />
+
+<link rel="stylesheet" href="http://radiki.dev/style.css" />
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://radiki.dev/img/apple-touch-icon-144-precomposed.png" />
+<link rel="shortcut icon" href="http://radiki.dev/img/favicon.png" />
+
+
+<link href="https://radiki.dev/fonts/Inter-Italic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://radiki.dev/fonts/Inter-Regular.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://radiki.dev/fonts/Inter-Medium.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://radiki.dev/fonts/Inter-MediumItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://radiki.dev/fonts/Inter-Bold.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://radiki.dev/fonts/Inter-BoldItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="A step beyond Rust&#39;s pattern matching"/>
+<meta name="twitter:description" content="Going from &ldquo;I have no clue what I&rsquo;m doing&rdquo; to &ldquo;Hey, it worked!&rdquo;, one weird idea at a time"/>
+
+
+
+<meta property="og:title" content="A step beyond Rust&#39;s pattern matching" />
+<meta property="og:description" content="Going from &ldquo;I have no clue what I&rsquo;m doing&rdquo; to &ldquo;Hey, it worked!&rdquo;, one weird idea at a time" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://radiki.dev/posts/match-and-bind-patterns/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-03-21T10:50:52+02:00" />
+<meta property="article:modified_time" content="2024-03-21T10:50:52+02:00" /><meta property="og:site_name" content="radiki.dev" />
+
+
+
+
+
+
+  </head>
+  <body >
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a
+  href="https://radiki.dev/"
+  class="logo"
+  style="text-decoration: none;"
+>
+  
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367" />
+</svg>
+</span>
+    <span class="logo__text"
+      >radiki.dev</span
+    >
+    <span class="logo__cursor"></span>
+  
+</a>
+
+    <span class="header__right">
+    <span class="menu"><a href="https://radiki.dev/index.xml">RSS</span>
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="https://radiki.dev/about">About</a></li>
+        
+      
+      
+      
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="https://radiki.dev/about">About</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg
+  class="theme-toggler"
+  width="24"
+  height="24"
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"
+  />
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  
+  
+
+  <article class="post">
+    <h1 class="post-title">A step beyond Rust&rsquo;s pattern matching</h1>
+    <div class="post-meta">
+      
+        <time class="post-date">
+          2024-03-21
+        </time>
+
+        
+          
+        
+      
+
+      
+
+
+      
+        <span class="post-read-time"
+          >— 6 min read</span
+        >
+      
+    </div>
+
+    
+      <span class="post-tags">
+        
+          <a href="http://radiki.dev/tags/rust/">#rust</a>&nbsp;
+        
+          <a href="http://radiki.dev/tags/glowdust/">#glowdust</a>&nbsp;
+        
+      </span>
+    
+
+    
+
+    <div class="post-content">
+      
+      <h3 id="if-you-dont-need-a-refresh-of-basic-rust-pattern-match-go-directly-to-the-new-stuffglowdust">
+  If you don&rsquo;t need a refresh of basic Rust pattern match, go directly to <a href="index.html#glowdust">the new stuff</a>
+  <a href="index.html#if-you-dont-need-a-refresh-of-basic-rust-pattern-match-go-directly-to-the-new-stuffglowdust" class="h-anchor" aria-hidden="true">#</a>
+</h3>
+<h2 id="a-very-opinionated-reminder-of-patterns-in-rust">
+  A very opinionated reminder of patterns in Rust
+  <a href="index.html#a-very-opinionated-reminder-of-patterns-in-rust" class="h-anchor" aria-hidden="true">#</a>
+</h2>
+<p>Here&rsquo;s a simple pattern match in Rust:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Rust" data-lang="Rust"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> a <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+</span></span></code></pre></div><p>Pretty anticlimactic, huh? Well, let me spice it up a bit:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Rust" data-lang="Rust"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> (a, b) <span style="color:#f92672">=</span> (<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>);
+</span></span></code></pre></div><p>Still not good enough? Ok, let&rsquo;s try something fancier:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Rust" data-lang="Rust"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> (a, <span style="color:#ae81ff">2</span>) <span style="color:#f92672">=</span> (<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>); <span style="color:#75715e">// Does not compile
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>error[E0005]: <span style="color:#a6e22e">refutable</span> pattern <span style="color:#66d9ef">in</span> local binding
+</span></span><span style="display:flex;"><span> <span style="color:#f92672">-</span>-&gt; <span style="color:#a6e22e">src</span><span style="color:#f92672">/</span>example.rs:<span style="color:#ae81ff">3</span>:<span style="color:#ae81ff">9</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">3</span> <span style="color:#f92672">|</span>     <span style="color:#66d9ef">let</span> (a, <span style="color:#ae81ff">2</span>) <span style="color:#f92672">=</span> (<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span>         <span style="color:#f92672">^^^^^^</span> patterns <span style="color:#960050;background-color:#1e0010">`</span>(_, <span style="color:#66d9ef">i32</span>::<span style="color:#66d9ef">MIN</span><span style="color:#f92672">..=</span><span style="color:#ae81ff">1_</span><span style="color:#66d9ef">i32</span>)<span style="color:#960050;background-color:#1e0010">`</span> and <span style="color:#960050;background-color:#1e0010">`</span>(_, <span style="color:#ae81ff">3_</span><span style="color:#66d9ef">i32</span><span style="color:#f92672">..=</span><span style="color:#66d9ef">i32</span>::<span style="color:#66d9ef">MAX</span>)<span style="color:#960050;background-color:#1e0010">`</span> not covered
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">=</span> note: <span style="color:#960050;background-color:#1e0010">`</span><span style="color:#66d9ef">let</span><span style="color:#960050;background-color:#1e0010">`</span> bindings require an <span style="color:#e6db74">&#34;irrefutable pattern&#34;</span>, like a <span style="color:#960050;background-color:#1e0010">`</span><span style="color:#66d9ef">struct</span><span style="color:#960050;background-color:#1e0010">`</span> or an <span style="color:#960050;background-color:#1e0010">`</span><span style="color:#66d9ef">enum</span><span style="color:#960050;background-color:#1e0010">`</span> with only one variant
+</span></span></code></pre></div><p>Well, that escalated quickly.</p>
+<p>Now, <code>rustc</code> and I have had our disagreements, but in this case I can sort of see the point: This pattern can, in theory, fail.
+Our puny human eyes may not see it - in fact, you may think &ldquo;hey, I am pretty sure 2 is equal to 2. How can that fail?&rdquo;</p>
+<p>Good point. But what if it was</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Rust" data-lang="Rust"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> (a, <span style="color:#ae81ff">2</span>) <span style="color:#f92672">=</span> (<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span><span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>); <span style="color:#75715e">// Does not compile either
+</span></span></span></code></pre></div><p>Or some other, more complicated expression? No, says <code>rustc</code>, as long as there is an equality at play,
+(by having a constant on the left hand side, for example), I will not let you do this unconditionally.</p>
+<p>But <em>conditionally</em>? No problem.</p>
+<p>Let&rsquo;s do that, then</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Rust" data-lang="Rust"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> (a, <span style="color:#ae81ff">2</span>) <span style="color:#f92672">=</span> (<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>) {
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#e6db74">&#34;Made it, a is </span><span style="color:#e6db74">{}</span><span style="color:#e6db74">&#34;</span>, a);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// prints &#34;Made it, a is 1&#34;
+</span></span></span></code></pre></div><p>Excellent. I can pattern match on constants and capture variables. Let&rsquo;s do something more complex</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Rust" data-lang="Rust"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> (a, <span style="color:#ae81ff">2</span>) <span style="color:#f92672">=</span> (<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>) <span style="color:#f92672">&amp;&amp;</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">let</span> (b, <span style="color:#ae81ff">4</span>) <span style="color:#f92672">=</span> (<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>) <span style="color:#f92672">&amp;&amp;</span>
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#e6db74">&#34;Made it, a = </span><span style="color:#e6db74">{}</span><span style="color:#e6db74">, b = </span><span style="color:#e6db74">{}</span><span style="color:#e6db74">&#34;</span>, a, b);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// prints &#34;Made it, a = 1, b = 3&#34;
+</span></span></span></code></pre></div><p>Nice, I can do conditionals between pattern matches and variable bindings. The example above is silly
+because the pattern will always match, but the syntax is what matters here.</p>
+<p>I can even build on this, to add conditions for the already bound variables:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Rust" data-lang="Rust"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#66d9ef">let</span> (a, <span style="color:#ae81ff">2</span>) <span style="color:#f92672">=</span> (<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>) <span style="color:#f92672">&amp;&amp;</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">let</span> (c, <span style="color:#ae81ff">4</span>) <span style="color:#f92672">=</span> (<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>) <span style="color:#f92672">&amp;&amp;</span>
+</span></span><span style="display:flex;"><span>   b <span style="color:#f92672">==</span> a <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span> {
+</span></span><span style="display:flex;"><span>      println!(<span style="color:#e6db74">&#34;Made it, a = </span><span style="color:#e6db74">{}</span><span style="color:#e6db74">, b = </span><span style="color:#e6db74">{}</span><span style="color:#e6db74">&#34;</span>, a, b);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// still prints &#34;Made it, a = 1, b = 3&#34;
+</span></span></span></code></pre></div><h2 id="glowdust">
+  And that&rsquo;s where all the trouble begun
+  <a href="index.html#glowdust" class="h-anchor" aria-hidden="true">#</a>
+</h2>
+<p>Watching this, I couldn&rsquo;t help but think that it looks a lot like a declarative query&hellip;thing?</p>
+<p>Say I have a vector of pairs:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Rust" data-lang="Rust"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> the_data <span style="color:#f92672">=</span> vec![
+</span></span><span style="display:flex;"><span>	(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>),
+</span></span><span style="display:flex;"><span>	(<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span>	(<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>),
+</span></span><span style="display:flex;"><span>	(<span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">7</span>),
+</span></span><span style="display:flex;"><span>	(<span style="color:#ae81ff">8</span>, <span style="color:#ae81ff">8</span>)];
+</span></span></code></pre></div><p>I can grab an iterator out of it and do the same pattern matching in a for loop:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Rust" data-lang="Rust"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> (a, b) <span style="color:#66d9ef">in</span> the_data {
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#e6db74">&#34;(</span><span style="color:#e6db74">{}</span><span style="color:#e6db74">, </span><span style="color:#e6db74">{}</span><span style="color:#e6db74">)&#34;</span>, a, b);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// prints
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// (1, 2)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// (2, 3)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// (5, 7)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// (8, 8)
+</span></span></span></code></pre></div><p>This is trivial, but it is also clearly a pattern match.</p>
+<p><em>And I want to do it conditionally, in the match itself.</em></p>
+<p>Let&rsquo;s try a <code>while</code> instead of a <code>for</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Rust" data-lang="Rust"><span style="display:flex;"><span><span style="color:#66d9ef">while</span> <span style="color:#66d9ef">let</span> Some((a, b)) <span style="color:#f92672">=</span> iterator.next() <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">*</span>b <span style="color:#f92672">==</span> <span style="color:#f92672">*</span>a <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>  {
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#e6db74">&#34;(</span><span style="color:#e6db74">{}</span><span style="color:#e6db74">, </span><span style="color:#e6db74">{}</span><span style="color:#e6db74">)&#34;</span>, a, b);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// prints
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// (1, 2)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// (2, 3)
+</span></span></span></code></pre></div><p>Ok, not bad, we&rsquo;ve got some kind of a conditional going. But I want something more.
+I want to do it in the pattern binding:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Rust" data-lang="Rust"><span style="display:flex;"><span><span style="color:#66d9ef">while</span> <span style="color:#66d9ef">let</span> Some((a, a <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>)) <span style="color:#f92672">=</span> iterator.next() { <span style="color:#75715e">// How cool would it be if this worked?
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    println!(<span style="color:#e6db74">&#34;(</span><span style="color:#e6db74">{}</span><span style="color:#e6db74">, </span><span style="color:#e6db74">{}</span><span style="color:#e6db74">)&#34;</span>, a, b);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Sadly, it doesn&rsquo;t work:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Rust" data-lang="Rust"><span style="display:flex;"><span>error: <span style="color:#a6e22e">expected</span> a pattern, found an expression
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">-</span>-&gt; <span style="color:#a6e22e">src</span><span style="color:#f92672">/</span>example.rs:<span style="color:#ae81ff">11</span>:<span style="color:#ae81ff">24</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">11</span> <span style="color:#f92672">|</span>     <span style="color:#66d9ef">while</span> <span style="color:#66d9ef">let</span> Some((a, a <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>)) <span style="color:#f92672">=</span> iterator.next() {
+</span></span><span style="display:flex;"><span>   <span style="color:#f92672">|</span>                        <span style="color:#f92672">^^^^^</span> arbitrary expressions are not allowed <span style="color:#66d9ef">in</span> patterns
+</span></span></code></pre></div><p>Now, I am not a language designer, and I know next to nothing about Rust internals (I barely know Rust, to be honest).
+I can&rsquo;t say if allowing this would break other things in the language or if it&rsquo;s a well known bad idea.</p>
+<p>Thankfully, my ignorance is my shield, and I have no problems whatsoever making this work in my own language.</p>
+<h2 id="pattern-matching-in-glowdust">
+  Pattern matching in Glowdust
+  <a href="index.html#pattern-matching-in-glowdust" class="h-anchor" aria-hidden="true">#</a>
+</h2>
+<p>The algorithm in Glowdust is simple.</p>
+<p>Just like in Rust, if there is an unbound variable in the left hand side of a pattern, then it is bound to whatever is on the right hand side.
+From then on, it is bound, and it behaves as a match, again like Rust does.</p>
+<p><em>(NOTE: I say left hand/right hand side, but in Glowdust syntax the -&gt; operator flips the two sides. Keep that in mind for the following examples)</em></p>
+<p>The difference is that it does both in the same pattern. Here&rsquo;s an example, in Glowdust</p>
+<p>First define a function to hold our data:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Rust" data-lang="Rust"><span style="display:flex;"><span>function my() <span style="color:#f92672">=</span> {}
+</span></span></code></pre></div><p>Then populate with the same data as the iterator example above and query that:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Rust" data-lang="Rust"><span style="display:flex;"><span>my(<span style="color:#ae81ff">1</span>) <span style="color:#f92672">=</span> (<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>);
+</span></span><span style="display:flex;"><span>my(<span style="color:#ae81ff">2</span>) <span style="color:#f92672">=</span> (<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>);
+</span></span><span style="display:flex;"><span>my(<span style="color:#ae81ff">3</span>) <span style="color:#f92672">=</span> (<span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">7</span>);
+</span></span><span style="display:flex;"><span>my(<span style="color:#ae81ff">4</span>) <span style="color:#f92672">=</span> (<span style="color:#ae81ff">8</span>, <span style="color:#ae81ff">8</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">match</span> my(x) -&gt; (y1, y1 <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>), <span style="color:#66d9ef">return</span> y1
+</span></span></code></pre></div><p>This works as expected:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Rust" data-lang="Rust"><span style="display:flex;"><span>[<span style="color:#ae81ff">1</span>]
+</span></span><span style="display:flex;"><span>[<span style="color:#ae81ff">2</span>]
+</span></span></code></pre></div><p>But let&rsquo;s not stop here. Let&rsquo;s use this capability to do a join:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Rust" data-lang="Rust"><span style="display:flex;"><span><span style="color:#66d9ef">match</span> my(_) -&gt; (left, middle), my(_) -&gt; (middle, right), <span style="color:#66d9ef">return</span> left, middle, right
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Rust" data-lang="Rust"><span style="display:flex;"><span>[<span style="color:#ae81ff">8</span>, <span style="color:#ae81ff">8</span>, <span style="color:#ae81ff">8</span>]
+</span></span><span style="display:flex;"><span>[<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>]
+</span></span></code></pre></div><p>This works exactly because the first time a variable is met it is bound, and then it&rsquo;s used as a <em>refutable</em> match.</p>
+<p><code>middle</code>, in this case, is bound in the outer loop and then its value is used as a refutable pattern in the inner loop.</p>
+<p>It also has a very declarative, pattern matching feel to it, but it is very familiar and readable.
+The predicates it implies can be moved around and be optimized according to
+cardinalities and other statistics in the data store. They can even be pushed down to the
+storage layer, if computational storage becomes available.</p>
+<p>Did I mention that it works?
+You can run these examples right now, today, in <a href="https://codeberg.org/glowdust/glowdust">Glowdust</a>.</p>
+<h2 id="query-by-example-didnt-go-far-enough">
+  Query By Example didn&rsquo;t go far enough
+  <a href="index.html#query-by-example-didnt-go-far-enough" class="h-anchor" aria-hidden="true">#</a>
+</h2>
+<p>This may remind you of Query By Example in MS Access or Hibernate.</p>
+<p>It isn&rsquo;t.</p>
+<p>It&rsquo;s Query By Pattern, which is much cooler.</p>
+<p>This compiles down to proper bytecode, it isn&rsquo;t just a DSL. You can have full expressions reusing
+variables that just came into scope, join on them and use them in further expressions like filters and
+(eventually) aggregations.</p>
+<p>I think the comparison to Rust&rsquo;s (and other languages&rsquo;) patern matching is interesting, but I don&rsquo;t
+remotely argue that it is better. It is, however, better suited for a database query language.</p>
+<p>Which is quite fortunate, because that&rsquo;s what I&rsquo;m building.</p>
+<hr>
+<p>As always, let me know your thoughts on <a href="https://fosstodon.org/@chrisg">Mastodon</a></p>
+<p>And, if you find this interesting enough, you may want to <a href="https://liberapay.com/chris.gioran/">donate</a> towards the costs of developing Glowdust.</p>
+
+    </div>
+    
+
+    
+      
+    
+  </article>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+        <a
+  href="https://radiki.dev/"
+  class="logo"
+  style="text-decoration: none;"
+>
+  
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367" />
+</svg>
+</span>
+    <span class="logo__text"
+      >radiki.dev</span
+    >
+    <span class="logo__cursor"></span>
+  
+</a>
+
+    <br/>
+    <div>
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png" /></a><br />
+    </div>
+    <br/>
+    <div class="copyright">
+        <span>© 2024 Chris Gioran</span>
+    </div>
+    
+    </div>
+</footer>
+
+
+
+
+
+<script type="text/javascript" src="https://radiki.dev/bundle.min.js"></script>
+
+
+      
+    </div>
+
+    
+  </body>
+</html>
